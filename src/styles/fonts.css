@@ -1,0 +1,36 @@
+/* ============================================================
+   @font-face Declarations — Self-host where possible
+   ============================================================ */
+
+/* JetBrains Mono — self-hosted via @fontsource */
+@import "@fontsource/jetbrains-mono/400.css";
+@import "@fontsource/jetbrains-mono/500.css";
+@import "@fontsource/jetbrains-mono/700.css";
+
+/* Noto Sans SC — self-hosted (Latin + CJK subsets) */
+/* Only loaded when needed; system fonts are the primary stack */
+@import "@fontsource/noto-sans-sc/400.css";
+@import "@fontsource/noto-sans-sc/500.css";
+@import "@fontsource/noto-sans-sc/700.css";
+
+/* Noto Serif SC — self-hosted, used for Chinese serif body text */
+@import "@fontsource/noto-serif-sc/400.css";
+@import "@fontsource/noto-serif-sc/700.css";
+
+/* ============================================================
+   Font stacks — applied via CSS custom properties
+   These are set in global.css @theme block for Tailwind.
+   Below are plain CSS fallback declarations.
+   ============================================================ */
+
+/* System CJK sans-serif stack — zero download cost */
+:root {
+  --font-cjk-sans: "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB",
+    "Noto Sans CJK SC", "WenQuanYi Micro Hei", sans-serif;
+
+  --font-cjk-serif: "Noto Serif SC", "STSong", "Songti SC", "SimSun", "PMingLiU",
+    serif;
+}
+
+/* Lora loaded via Google Fonts CDN for Latin subset only (~120KB variable font) */
+/* Preloaded in BaseHead.astro for performance */

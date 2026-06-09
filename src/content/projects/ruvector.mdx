@@ -1,0 +1,31 @@
+---
+title: "ruvector.db — 本地向量数据库"
+titleEn: "ruvector.db — A Local Vector Database"
+description: "一个 Rust 写的本地向量数据库，支持嵌入式检索，不需要任何外部服务。"
+date: 2026-05-20
+tags: ["rust", "database", "ml"]
+category: "cli"
+lang: "mixed"
+draft: false
+featured: true
+techStack: ["Rust", "SQLite", "BERT"]
+year: 2026
+status: "done"
+repoUrl: "https://github.com/tristanchen/ruvector"
+---
+
+## 动机
+
+我在做课程项目时需要用到语义搜索——输入一句话，找到最相关的笔记段落。现有的方案要么太重（ChromaDB、Qdrant 需要 Docker），要么不够灵活。于是决定自己写一个。
+
+## 设计
+
+核心思路：把向量存进 SQLite，用 BERT 做 embedding，查询时用余弦相似度排序。
+
+- **存储层**：SQLite + `sqlite-vec` 扩展，支持 1536 维向量
+- **Embedding**：用 `rust-bert` 加载 BERT-base-chinese 模型
+- **接口**：命令行 + 简单的 Rust API
+
+## 效果
+
+在 500 篇课程笔记上的测试——输入关键词后 200ms 内返回 top-10 结果，准确率比纯关键词搜索 (SQL LIKE) 高出很多。

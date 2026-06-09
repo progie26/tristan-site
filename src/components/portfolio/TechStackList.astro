@@ -1,0 +1,26 @@
+<!-- ============================================================
+   TechStackList.astro — List of tech stack tags
+   ============================================================ -->
+
+---
+import Tag from "../ui/Tag.astro";
+
+interface Props {
+  techStack: string[];
+  class?: string;
+}
+
+const { techStack, class: className } = Astro.props;
+---
+
+<div class={["tech-stack", className].filter(Boolean).join(" ")}>
+  {techStack.map((tech) => <Tag label={tech} size="sm" />)}
+</div>
+
+<style>
+  .tech-stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1);
+  }
+</style>

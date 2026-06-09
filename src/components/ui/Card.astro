@@ -1,0 +1,88 @@
+<!-- ============================================================
+   Card.astro — Base card shell
+   Shared by all card components. Handles border/radius/shadow/hover.
+   Accepts optional `size` prop for Bento grid spanning.
+   ============================================================ -->
+
+---
+interface Props {
+  /** Bento grid size — controls grid-column and grid-row span */
+  size?: "1x1" | "2x1" | "1x2" | "2x2";
+  /** If true, card has an expand interaction cursor */
+  expandable?: boolean;
+  /** Link card — wraps in <a> instead of <div> */
+  href?: string;
+  class?: string;
+}
+
+const { size = "1x1", expandable = false, href, class: className } = Astro.props;
+
+const sizeClass = `card--${size}`;
+const expandableClass = expandable ? "card--expandable" : "";
+const TagName = href ? "a" : "div";
+---
+
+<TagName
+  href={href}
+  class={["card", sizeClass, expandableClass, className].filter(Boolean).join(" ")}
+>
+  <slot />
+</TagName>
+
+<style>
+  .card {
+    display: block;
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    background: var(--color-bg-elevated);
+    box-shadow: var(--shadow-sm);
+    padding: var(--space-5);
+    overflow: hidden;
+    color: var(--color-ink);
+    background-image: none;
+    transition:
+      transform var(--duration-normal) var(--ease-out),
+      box-shadow var(--duration-normal) var(--ease-out),
+      border-color var(--duration-normal) var(--ease-out);
+  }
+
+  .card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--color-accent-muted);
+  }
+
+  .card:active {
+    transform: scale(0.98);
+    transition-duration: var(--duration-instant);
+  }
+
+  /* Bento grid sizes */
+  .card--1x1 {
+    grid-column: span 3;
+    grid-row: span 1;
+  }
+  .card--2x1 {
+    grid-column: span 6;
+    grid-row: span 1;
+  }
+  .card--1x2 {
+    grid-column: span 3;
+    grid-row: span 2;
+  }
+  .card--2x2 {
+    grid-column: span 6;
+    grid-row: span 2;
+  }
+
+  /* Expandable cursor */
+  .card--expandable {
+    cursor: pointer;
+  }
+
+  /* Link card — reset link styles */
+  a.card {
+    text-decoration: none;
+    background-image: none;
+  }
+</style>

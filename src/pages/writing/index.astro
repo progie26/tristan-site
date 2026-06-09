@@ -1,0 +1,86 @@
+<!-- ============================================================
+   /writing/index.astro — Article listing page
+   Shows all non-draft blog posts, filterable by tag, sortable.
+   ============================================================ -->
+
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PostCard from "../../components/blog/PostCard.astro";
+import PostGrid from "../../components/blog/PostGrid.astro";
+import { SITE } from "../../lib/constants";
+
+const allPosts = await getCollection("blog", ({ data }) => !data.draft);
+const sortedPosts = allPosts.sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime()
+);
+---
+
+<BaseLayout
+  title="文章 | Tristan Chen"
+  description="博客文章列表。技术和学习笔记。"
+  canonicalURL={new URL("/writing", Astro.site).href}
+  currentPath="/writing"
+>
+  <div class="list-page">
+    <header class="list-header">
+      <h1 class="list-title">Writing <span class="list-title-zh">文章</span></h1>
+      <p class="list-count">{sortedPosts.length} 篇文章</p>
+    </header>
+
+    {
+      sortedPosts.length === 0 ? (
+        <div class="list-empty">
+          <p>还没有文章。写点什么吧。</p>
+        </div>
+      ) : (
+        <PostGrid>
+          {sortedPosts.map((post) => (
+            <PostCard post={post} peek />
+          ))}
+        </PostGrid>
+      )
+    }
+  </div>
+</BaseLayout>
+
+<style>
+  .list-page {
+    max-width: var(--grid-max);
+    margin-inline: auto;
+    padding: var(--space-16) var(--page-padding-x);
+  }
+
+  .list-header {
+    margin-block-end: var(--space-10);
+  }
+
+  .list-title {
+    font-family: var(--font-serif);
+    font-size: var(--text-3xl);
+    font-weight: var(--weight-bold);
+    margin: 0;
+    color: var(--color-ink);
+  }
+
+  .list-title-zh {
+    font-size: var(--text-xl);
+    color: var(--color-ink-secondary);
+    font-weight: var(--weight-normal);
+    margin-inline-start: var(--space-2);
+  }
+
+  .list-count {
+    font-size: var(--text-sm);
+    color: var(--color-ink-tertiary);
+    margin-block-start: var(--space-2);
+  }
+
+  .list-empty {
+    padding: var(--space-16);
+    text-align: center;
+    color: var(--color-ink-tertiary);
+    border: 2px dashed var(--color-border);
+    border-radius: 12px;
+  }
+</style>

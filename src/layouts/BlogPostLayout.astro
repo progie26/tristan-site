@@ -1,0 +1,163 @@
+<!-- ============================================================
+   BlogPostLayout.astro — Article detail page layout
+   Extends BaseLayout with TOC sidebar and progress bar slot.
+   ============================================================ -->
+
+---
+import BaseLayout from "./BaseLayout.astro";
+import TableOfContents from "../components/blog/TableOfContents.astro";
+import ProgressBar from "../components/interactive/ProgressBar.tsx";
+import { formatDate } from "../lib/utils";
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+  post: CollectionEntry<"blog">;
+  headings: { level: number; text: string; slug: string }[];
+}
+
+const { post, headings } = Astro.props;
+const { title, description, date, tags, lang, readingTimeMin } = post.data;
+const canonicalURL = new URL(`/writing/${post.slug}`, Astro.site).href;
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonicalURL={canonicalURL}
+  lang={lang}
+  currentPath={`/writing/${post.slug}`}
+>
+  <ProgressBar client:load />
+
+  <div class="post-layout">
+    <aside class="post-sidebar">
+      <TableOfContents headings={headings} />
+    </aside>
+
+    <div class="post-main">
+      <header class="post-header">
+        <div class="post-header-meta">
+          <time datetime={date.toISOString()}>
+            {formatDate(date)}
+          </time>
+          <span aria-hidden="true">·</span>
+          <span>{Math.max(1, Math.ceil((post.body?.length ?? 0) / 1500))} min read</span>
+          <span aria-hidden="true">·</span>
+          <span>{lang === "zh" ? "中文" : lang === "en" ? "English" : "中英混合"}</span>
+        </div>
+        <h1 class="post-title" lang={lang}>{title}</h1>
+        {tags.length > 0 && (
+          <div class="post-tags">
+            {tags.map((tag) => (
+              <a href={`/tags/${tag}`} class="post-tag">{tag}</a>
+            ))}
+          </div>
+        )}
+      </header>
+
+      <article class="post-body">
+        <slot />
+      </article>
+
+      <footer class="post-footer">
+        <nav class="post-nav">
+          <a href="/writing" class="back-link">← 返回文章列表</a>
+        </nav>
+      </footer>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .post-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    max-width: calc(var(--content-max) + 240px + var(--space-10));
+    margin-inline: auto;
+    padding: var(--space-10) var(--page-padding-x);
+    gap: var(--space-10);
+  }
+
+  @media (min-width: 1024px) {
+    .post-layout {
+      grid-template-columns: 200px minmax(0, 1fr);
+      padding-block-start: var(--space-16);
+    }
+  }
+
+  .post-sidebar {
+    display: none;
+  }
+
+  @media (min-width: 1024px) {
+    .post-sidebar {
+      display: block;
+    }
+  }
+
+  .post-main {
+    min-width: 0;
+  }
+
+  .post-header {
+    margin-block-end: var(--space-10);
+  }
+
+  .post-header-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-sm);
+    color: var(--color-ink-secondary);
+    margin-block-end: var(--space-4);
+  }
+
+  .post-title {
+    font-family: var(--font-serif);
+    font-size: var(--text-3xl);
+    font-weight: var(--weight-bold);
+    line-height: var(--leading-tight);
+    margin: 0;
+    color: var(--color-ink);
+  }
+
+  .post-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-block-start: var(--space-4);
+  }
+
+  .post-tag {
+    font-size: var(--text-xs);
+    color: var(--color-accent);
+    background: var(--color-accent-muted);
+    padding: var(--space-1) var(--space-3);
+    border-radius: 9999px;
+    font-weight: var(--weight-medium);
+    background-image: none;
+  }
+  .post-tag:hover {
+    background: var(--color-accent);
+    color: #fff;
+    background-image: none;
+  }
+
+  .post-body {
+    min-height: 50vh;
+  }
+
+  .post-footer {
+    margin-block-start: var(--space-16);
+    padding-block-start: var(--space-8);
+    border-top: 1px solid var(--color-border);
+  }
+
+  .back-link {
+    font-size: var(--text-sm);
+    color: var(--color-ink-secondary);
+  }
+  .back-link:hover {
+    color: var(--color-ink);
+  }
+</style>

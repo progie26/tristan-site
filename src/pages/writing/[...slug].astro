@@ -1,0 +1,104 @@
+<!-- ============================================================
+   /writing/[...slug].astro — Article detail page
+   Renders a single MDX blog post.
+   ============================================================ -->
+
+---
+import { getCollection, render } from "astro:content";
+import BlogPostLayout from "../../layouts/BlogPostLayout.astro";
+import type { CollectionEntry } from "astro:content";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("blog", ({ data }) => !data.draft);
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+}
+
+interface Props {
+  post: CollectionEntry<"blog">;
+}
+
+const { post } = Astro.props;
+
+// Render MDX body
+const { Content, headings } = await render(post);
+
+// Also fetch all posts for related articles (server-side)
+const allPosts = await getCollection("blog", ({ data }) => !data.draft);
+const relatedPosts = allPosts
+  .filter((p) => p.slug !== post.slug)
+  .filter((p) => p.data.tags.some((t) => post.data.tags.includes(t)))
+  .slice(0, 3);
+---
+
+<BlogPostLayout post={post} headings={headings}>
+  <Content />
+
+  {
+    relatedPosts.length > 0 && (
+      <section class="related-section">
+        <h2 class="related-title">相关文章</h2>
+        <div class="related-scroll">
+          {relatedPosts.map((rp) => (
+            <a href={`/writing/${rp.slug}`} class="related-card">
+              <h3>{rp.data.title}</h3>
+              <p>{rp.data.description}</p>
+            </a>
+          ))}
+        </div>
+      </section>
+    )
+  }
+</BlogPostLayout>
+
+<style>
+  .related-section {
+    margin-block-start: var(--space-16);
+    padding-block-start: var(--space-8);
+    border-top: 1px solid var(--color-border);
+  }
+
+  .related-title {
+    font-size: var(--text-lg);
+    font-weight: var(--weight-semibold);
+    margin-block-end: var(--space-6);
+  }
+
+  .related-scroll {
+    display: flex;
+    gap: var(--space-4);
+    overflow-x: auto;
+    padding-block-end: var(--space-2);
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .related-card {
+    flex: 0 0 260px;
+    scroll-snap-align: start;
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    padding: var(--space-4);
+    background: var(--color-bg-elevated);
+    background-image: none;
+    transition: border-color var(--duration-fast);
+    text-decoration: none;
+  }
+  .related-card:hover {
+    border-color: var(--color-accent-muted);
+    background-image: none;
+  }
+  .related-card h3 {
+    font-size: var(--text-sm);
+    font-weight: var(--weight-semibold);
+    margin: 0 0 var(--space-2);
+    color: var(--color-ink);
+  }
+  .related-card p {
+    font-size: var(--text-xs);
+    color: var(--color-ink-secondary);
+    margin: 0;
+  }
+</style>

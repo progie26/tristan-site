@@ -1,0 +1,135 @@
+<!-- ============================================================
+   ArticlePreviewCard.astro — Homepage article preview variant
+   Larger than list PostCard, with "peek" excerpt always visible.
+   ============================================================ -->
+
+---
+import Card from "../ui/Card.astro";
+import Tag from "../ui/Tag.astro";
+import { formatDate } from "../../lib/utils";
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+  post: CollectionEntry<"blog">;
+  className?: string;
+}
+
+const { post, className } = Astro.props;
+const { title, description, date, tags, lang } = post.data;
+const href = `/writing/${post.slug}`;
+---
+
+<Card size="2x1" expandable class={className}>
+  <a href={href} class="preview-card-link">
+    <article class="article-preview" lang={lang}>
+      <div class="preview-meta">
+        <time datetime={date.toISOString()}>
+          {formatDate(date)}
+        </time>
+        {lang && (
+          <span class="preview-lang">
+            {lang === "zh" ? "中文" : lang === "en" ? "EN" : "中英"}
+          </span>
+        )}
+      </div>
+
+      <h3 class="preview-title">{title}</h3>
+      <p class="preview-desc">{description}</p>
+
+      <div class="preview-footer">
+        <div class="preview-tags">
+          {tags.slice(0, 3).map((tag) => (
+            <Tag label={tag} size="sm" />
+          ))}
+        </div>
+        <span class="preview-read">阅读 →</span>
+      </div>
+    </article>
+  </a>
+</Card>
+
+<style>
+  .preview-card-link {
+    text-decoration: none;
+    background-image: none;
+    color: inherit;
+    display: block;
+    height: 100%;
+  }
+  .preview-card-link:hover {
+    background-image: none;
+  }
+
+  .article-preview {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    gap: var(--space-2);
+  }
+
+  .preview-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-xs);
+    color: var(--color-ink-tertiary);
+  }
+
+  .preview-lang {
+    font-size: 0.625rem;
+    padding: 0.05em 0.4em;
+    border-radius: 4px;
+    background: var(--color-bg-inset);
+    text-transform: uppercase;
+  }
+
+  .preview-title {
+    font-family: var(--font-serif);
+    font-size: var(--text-lg);
+    font-weight: var(--weight-semibold);
+    line-height: var(--leading-snug);
+    margin: 0;
+  }
+
+  .preview-desc {
+    font-size: var(--text-sm);
+    color: var(--color-ink-secondary);
+    margin: 0;
+    line-height: var(--leading-normal);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .preview-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    margin-block-start: auto;
+  }
+
+  .preview-tags {
+    display: flex;
+    gap: var(--space-1);
+    flex-wrap: wrap;
+  }
+
+  .preview-read {
+    font-size: var(--text-xs);
+    color: var(--color-accent);
+    font-weight: var(--weight-medium);
+    white-space: nowrap;
+    opacity: 0;
+    transform: translateX(-4px);
+    transition:
+      opacity var(--duration-fast),
+      transform var(--duration-fast);
+  }
+
+  .card:hover .preview-read {
+    opacity: 1;
+    transform: translateX(0);
+  }
+</style>

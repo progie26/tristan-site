@@ -1,0 +1,50 @@
+<!-- ============================================================
+   Badge.astro — Status badge (WIP / Completed / Archived)
+   Small colored rectangle with rounded corners.
+   ============================================================ -->
+
+---
+interface Props {
+  variant: "wip" | "completed" | "archived" | "default";
+  class?: string;
+}
+
+const { variant, class: className } = Astro.props;
+
+const variantLabel: Record<string, string> = {
+  wip: "WIP",
+  completed: "Done",
+  archived: "Archive",
+  default: "",
+};
+
+const variantColor: Record<string, string> = {
+  wip: "var(--color-warning)",
+  completed: "var(--color-success)",
+  archived: "var(--color-ink-tertiary)",
+  default: "var(--color-ink-tertiary)",
+};
+
+const label = variantLabel[variant] || "";
+const color = variantColor[variant] || variantColor.default;
+---
+
+<span
+  class={["badge", `badge--${variant}`, className].filter(Boolean).join(" ")}
+  style={`background-color: ${color}18; color: ${color}; border: 1px solid ${color}33;`}
+>
+  {label}
+</span>
+
+<style>
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.1em 0.5em;
+    border-radius: 4px;
+    font-size: var(--text-xs);
+    font-weight: var(--weight-semibold);
+    line-height: var(--leading-snug);
+    letter-spacing: 0.02em;
+  }
+</style>

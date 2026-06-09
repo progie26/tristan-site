@@ -1,0 +1,297 @@
+<!-- ============================================================
+   /about.astro — About page
+   Static content: bio, skills, timeline, contact.
+   ============================================================ -->
+
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Card from "../components/ui/Card.astro";
+import { SITE, SOCIAL_LINKS } from "../lib/constants";
+
+const blogCount = (await getCollection("blog", ({ data }) => !data.draft)).length;
+const projectCount = (await getCollection("projects", ({ data }) => !data.draft)).length;
+
+const skills = [
+  {
+    category: "Languages",
+    items: ["Python", "JavaScript", "TypeScript", "Java", "Kotlin", "Go", "Rust", "C", "C++"],
+  },
+  {
+    category: "Web",
+    items: ["React", "Astro", "Next.js", "Tailwind CSS", "Node.js"],
+  },
+  {
+    category: "ML & Data",
+    items: ["PyTorch", "scikit-learn", "Pandas", "SQLite", "BERT"],
+  },
+  {
+    category: "Tools",
+    items: ["Git", "VS Code", "Linux", "Docker"],
+  },
+];
+
+const timeline = [
+  {
+    date: "2026",
+    title: "搭建个人博客",
+    description: "用 Astro 5 + React 19 从零搭建了这个网站。",
+  },
+  {
+    date: "2026",
+    title: "ruvector.db",
+    description: "用 Rust 写了一个本地向量数据库，用于课程笔记的语义搜索。",
+  },
+  {
+    date: "2025",
+    title: "开始学习编程",
+    description: "从 Python 入门，逐步接触 JS/TS、Rust、Go。对机器学习和 Web 开发最感兴趣。",
+  },
+];
+---
+
+<BaseLayout
+  title="关于 | Tristan Chen"
+  description="关于我——学生、写代码、学机器学习。"
+  canonicalURL={new URL("/about", Astro.site).href}
+  currentPath="/about"
+>
+  <div class="about-page">
+    <header class="about-hero">
+      <div class="about-hero-text">
+        <h1 class="about-name">Tristan Chen</h1>
+        <p class="about-role">学生 / 写代码 / 学机器学习</p>
+        <p class="about-bio">编程不到一年，兴趣很广。喜欢把事情从零做起来，看看能学到什么。</p>
+        <div class="about-stats">
+          <div class="stat">
+            <span class="stat-number">{blogCount}</span>
+            <span class="stat-label">文章</span>
+          </div>
+          <div class="stat">
+            <span class="stat-number">{projectCount}</span>
+            <span class="stat-label">项目</span>
+          </div>
+          <div class="stat">
+            <span class="stat-number">3</span>
+            <span class="stat-label">技能方向</span>
+          </div>
+        </div>
+        <div class="about-links">
+          <a href={SOCIAL_LINKS.github} target="_blank" rel="noopener noreferrer" class="about-link">
+            GitHub ↗
+          </a>
+          <a href={`mailto:${SOCIAL_LINKS.email}`} class="about-link">
+            Email ↗
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <section class="about-section">
+      <h2 class="about-section-title">技能</h2>
+      <div class="skills-grid">
+        {skills.map((group) => (
+          <Card>
+            <h3 class="skill-category">{group.category}</h3>
+            <div class="skill-tags">
+              {group.items.map((item) => (
+                <span class="skill-tag">{item}</span>
+              ))}
+            </div>
+          </Card>
+        ))}
+      </div>
+    </section>
+
+    <section class="about-section">
+      <h2 class="about-section-title">时间线</h2>
+      <div class="timeline">
+        {timeline.map((event) => (
+          <div class="timeline-item">
+            <div class="timeline-marker" />
+            <div class="timeline-content">
+              <time class="timeline-date">{event.date}</time>
+              <h3 class="timeline-title">{event.title}</h3>
+              <p class="timeline-desc">{event.description}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .about-page {
+    max-width: var(--grid-max);
+    margin-inline: auto;
+    padding: var(--space-16) var(--page-padding-x);
+  }
+
+  .about-hero {
+    margin-block-end: var(--space-20);
+  }
+
+  .about-hero-text {
+    max-width: var(--content-max);
+  }
+
+  .about-name {
+    font-family: var(--font-serif);
+    font-size: var(--text-4xl);
+    font-weight: var(--weight-bold);
+    margin: 0;
+    line-height: var(--leading-tight);
+  }
+
+  .about-role {
+    font-size: var(--text-xl);
+    color: var(--color-accent);
+    margin: var(--space-3) 0 0;
+    font-weight: var(--weight-medium);
+  }
+
+  .about-bio {
+    font-size: var(--text-lg);
+    color: var(--color-ink-secondary);
+    margin: var(--space-6) 0 0;
+    line-height: var(--leading-relaxed);
+  }
+
+  .about-stats {
+    display: flex;
+    gap: var(--space-10);
+    margin-block-start: var(--space-8);
+  }
+
+  .stat {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  .stat-number {
+    font-family: var(--font-serif);
+    font-size: var(--text-3xl);
+    font-weight: var(--weight-bold);
+    color: var(--color-accent);
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-size: var(--text-xs);
+    color: var(--color-ink-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .about-links {
+    display: flex;
+    gap: var(--space-4);
+    margin-block-start: var(--space-8);
+  }
+
+  .about-link {
+    font-size: var(--text-sm);
+    font-weight: var(--weight-medium);
+  }
+
+  .about-section {
+    margin-block-end: var(--space-20);
+  }
+
+  .about-section-title {
+    font-family: var(--font-serif);
+    font-size: var(--text-2xl);
+    font-weight: var(--weight-bold);
+    margin: 0 0 var(--space-8);
+    color: var(--color-ink);
+  }
+
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: var(--space-4);
+  }
+
+  .skill-category {
+    font-size: var(--text-sm);
+    font-weight: var(--weight-semibold);
+    margin: 0 0 var(--space-3);
+    color: var(--color-ink-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .skill-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1);
+  }
+
+  .skill-tag {
+    font-size: var(--text-xs);
+    padding: var(--space-1) var(--space-2);
+    border-radius: 6px;
+    background: var(--color-bg-inset);
+    color: var(--color-ink-secondary);
+  }
+
+  .timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .timeline-item {
+    display: flex;
+    gap: var(--space-6);
+    padding-block: var(--space-5);
+    position: relative;
+  }
+
+  .timeline-marker {
+    flex-shrink: 0;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--color-accent);
+    margin-block-start: 0.5em;
+    position: relative;
+    z-index: 1;
+  }
+
+  .timeline-item:not(:last-child) .timeline-marker::after {
+    content: "";
+    position: absolute;
+    top: 10px;
+    left: 4px;
+    width: 2px;
+    height: calc(100% + var(--space-5));
+    background: var(--color-border);
+  }
+
+  .timeline-content {
+    min-width: 0;
+  }
+
+  .timeline-date {
+    font-size: var(--text-xs);
+    color: var(--color-accent);
+    font-weight: var(--weight-semibold);
+  }
+
+  .timeline-title {
+    font-size: var(--text-base);
+    font-weight: var(--weight-semibold);
+    margin: var(--space-1) 0 0;
+    color: var(--color-ink);
+  }
+
+  .timeline-desc {
+    font-size: var(--text-sm);
+    color: var(--color-ink-secondary);
+    margin: var(--space-1) 0 0;
+    line-height: var(--leading-normal);
+  }
+</style>

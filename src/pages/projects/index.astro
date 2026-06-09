@@ -1,0 +1,85 @@
+<!-- ============================================================
+   /projects/index.astro — Project listing page
+   Shows all non-draft projects.
+   ============================================================ -->
+
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import ProjectCard from "../../components/portfolio/ProjectCard.astro";
+import ProjectGrid from "../../components/portfolio/ProjectGrid.astro";
+
+const allProjects = await getCollection("projects", ({ data }) => !data.draft);
+const sortedProjects = allProjects.sort(
+  (a, b) => (b.data.year ?? 0) - (a.data.year ?? 0)
+);
+---
+
+<BaseLayout
+  title="项目 | Tristan Chen"
+  description="作品集——我做过的项目。"
+  canonicalURL={new URL("/projects", Astro.site).href}
+  currentPath="/projects"
+>
+  <div class="list-page">
+    <header class="list-header">
+      <h1 class="list-title">Projects <span class="list-title-zh">项目</span></h1>
+      <p class="list-count">{sortedProjects.length} 个项目</p>
+    </header>
+
+    {
+      sortedProjects.length === 0 ? (
+        <div class="list-empty">
+          <p>还没有项目。开始做点什么吧。</p>
+        </div>
+      ) : (
+        <ProjectGrid>
+          {sortedProjects.map((project) => (
+            <ProjectCard project={project} peek />
+          ))}
+        </ProjectGrid>
+      )
+    }
+  </div>
+</BaseLayout>
+
+<style>
+  .list-page {
+    max-width: var(--grid-max);
+    margin-inline: auto;
+    padding: var(--space-16) var(--page-padding-x);
+  }
+
+  .list-header {
+    margin-block-end: var(--space-10);
+  }
+
+  .list-title {
+    font-family: var(--font-serif);
+    font-size: var(--text-3xl);
+    font-weight: var(--weight-bold);
+    margin: 0;
+    color: var(--color-ink);
+  }
+
+  .list-title-zh {
+    font-size: var(--text-xl);
+    color: var(--color-ink-secondary);
+    font-weight: var(--weight-normal);
+    margin-inline-start: var(--space-2);
+  }
+
+  .list-count {
+    font-size: var(--text-sm);
+    color: var(--color-ink-tertiary);
+    margin-block-start: var(--space-2);
+  }
+
+  .list-empty {
+    padding: var(--space-16);
+    text-align: center;
+    color: var(--color-ink-tertiary);
+    border: 2px dashed var(--color-border);
+    border-radius: 12px;
+  }
+</style>

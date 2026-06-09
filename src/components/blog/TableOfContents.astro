@@ -1,0 +1,135 @@
+<!-- ============================================================
+   TableOfContents.astro — Article table of contents
+   IntersectionObserver highlights the current heading.
+   Sticky sidebar on desktop, collapsible accordion on mobile.
+   ============================================================ -->
+
+---
+interface Props {
+  headings: { level: number; text: string; slug: string }[];
+}
+
+const { headings } = Astro.props;
+
+// Filter to h2 + h3 only (h1 is the article title)
+const tocHeadings = headings.filter((h) => h.level === 2 || h.level === 3);
+---
+
+{
+  tocHeadings.length > 0 && (
+    <nav class="toc" aria-label="Table of contents">
+      <details class="toc-details" open>
+        <summary class="toc-summary">目录</summary>
+        <ul class="toc-list">
+          {tocHeadings.map((h) => (
+            <li class={`toc-item toc-item--h${h.level}`}>
+              <a href={`#${h.slug}`} class="toc-link" data-toc-link>
+                {h.text}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </details>
+    </nav>
+  )
+}
+
+<style>
+  .toc {
+    position: sticky;
+    top: calc(48px + var(--space-10));
+  }
+
+  .toc-details {
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    padding: var(--space-4);
+    background: var(--color-bg-elevated);
+  }
+
+  .toc-summary {
+    font-size: var(--text-sm);
+    font-weight: var(--weight-semibold);
+    cursor: pointer;
+    color: var(--color-ink-secondary);
+    list-style: none;
+    margin-block-end: var(--space-3);
+  }
+  .toc-summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .toc-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  .toc-item {
+    font-size: var(--text-sm);
+    line-height: var(--leading-snug);
+  }
+
+  .toc-item--h3 {
+    padding-inline-start: var(--space-4);
+  }
+
+  .toc-link {
+    display: block;
+    padding: var(--space-1) var(--space-2);
+    border-radius: 6px;
+    color: var(--color-ink-secondary);
+    background-image: none;
+    transition:
+      color var(--duration-fast) var(--ease-out),
+      background-color var(--duration-fast) var(--ease-out);
+  }
+  .toc-link:hover {
+    color: var(--color-ink);
+    background-color: var(--color-bg-inset);
+    background-image: none;
+  }
+  .toc-link.active {
+    color: var(--color-accent);
+    background-color: var(--color-accent-muted);
+    font-weight: var(--weight-medium);
+  }
+
+  @media (max-width: 1023px) {
+    .toc {
+      position: static;
+      margin-block-end: var(--space-8);
+    }
+    .toc-details[open] .toc-summary {
+      margin-block-end: var(--space-3);
+    }
+  }
+</style>
+
+<script>
+  // IntersectionObserver for active heading highlighting
+  const tocLinks = document.querySelectorAll("[data-toc-link]");
+  const headings = document.querySelectorAll("h2[id], h3[id]");
+
+  if (tocLinks.length > 0 && headings.length > 0) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            tocLinks.forEach((link) => link.classList.remove("active"));
+            const activeLink = document.querySelector(
+              `[data-toc-link][href="#${entry.target.id}"]`
+            );
+            activeLink?.classList.add("active");
+          }
+        }
+      },
+      { rootMargin: "-48px 0px -80% 0px", threshold: 1 }
+    );
+
+    headings.forEach((h) => observer.observe(h));
+  }
+</script>

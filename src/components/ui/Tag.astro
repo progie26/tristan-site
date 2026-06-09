@@ -1,0 +1,80 @@
+<!-- ============================================================
+   Tag.astro — Individual tag chip/pill
+   Used in tag clouds, filter bars, and card metadata.
+   ============================================================ -->
+
+---
+interface Props {
+  label: string;
+  color?: string; // hex, e.g. "#2563eb"
+  active?: boolean;
+  size?: "sm" | "md";
+  /** Optional click handler slug — used by parent components */
+  onClick?: () => void;
+  class?: string;
+}
+
+const {
+  label,
+  color = "var(--color-accent)",
+  active = false,
+  size = "md",
+  onClick,
+  class: className,
+} = Astro.props;
+
+const TagName = onClick ? "button" : "span";
+const styles = active
+  ? `background-color: ${color}; color: #fff; border-color: ${color};`
+  : `color: ${color}; border-color: ${color}33;`;
+---
+
+<TagName
+  class={["tag", `tag--${size}`, active ? "tag--active" : "", className]
+    .filter(Boolean)
+    .join(" ")}
+  style={styles}
+  type={onClick ? "button" : undefined}
+  {...(onClick ? {} : {})}
+>
+  {label}
+</TagName>
+
+<style>
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid;
+    border-radius: 9999px;
+    font-size: var(--text-xs);
+    font-weight: var(--weight-medium);
+    background: transparent;
+    cursor: default;
+    white-space: nowrap;
+    transition:
+      background-color var(--duration-fast) var(--ease-out),
+      color var(--duration-fast) var(--ease-out),
+      transform var(--duration-fast) var(--ease-out);
+  }
+
+  .tag--sm {
+    padding: 0.1em 0.55em;
+    font-size: 0.6875rem;
+  }
+
+  .tag--md {
+    padding: 0.2em 0.7em;
+    font-size: var(--text-xs);
+  }
+
+  button.tag {
+    cursor: pointer;
+  }
+  button.tag:hover {
+    transform: scale(1.05);
+  }
+
+  .tag--active {
+    font-weight: var(--weight-semibold);
+  }
+</style>

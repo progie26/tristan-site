@@ -1,0 +1,74 @@
+<!-- ============================================================
+   BaseHead.astro — Global <head> content
+   SEO meta, OG, fonts preload, favicon
+   ============================================================ -->
+
+---
+import SEO from "../shared/SEO.astro";
+
+export interface Props {
+  title: string;
+  description: string;
+  ogImage?: string;
+  canonicalURL: string;
+  lang?: "zh" | "en" | "mixed";
+}
+
+const {
+  title,
+  description,
+  ogImage = "/images/og/default.png",
+  canonicalURL,
+  lang = "zh",
+} = Astro.props;
+
+const fullTitle = `${title} | Tristan Chen`;
+---
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="generator" content={Astro.generator} />
+
+  <!-- Primary meta -->
+  <title>{fullTitle}</title>
+  <meta name="description" content={description} />
+  <link rel="canonical" href={canonicalURL} />
+
+  <!-- Language -->
+  <html lang={lang === "mixed" ? "zh" : lang} />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="apple-touch-icon" href="/favicon.svg" />
+
+  <!-- Fonts preload -->
+  <link
+    rel="preload"
+    href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap"
+    as="style"
+  />
+  <link
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap"
+    media="print"
+    onload="this.media='all'"
+  />
+
+  <!-- View Transitions -->
+  <meta name="astro-view-transitions-enabled" content="true" />
+  <meta name="astro-view-transitions-fallback" content="animate" />
+
+  <!-- SEO -->
+  <SEO
+    title={fullTitle}
+    description={description}
+    ogImage={ogImage}
+    canonicalURL={canonicalURL}
+  />
+
+  <!-- Global styles -->
+  <style is:global>
+    @import "../../styles/global.css";
+  </style>
+</head>

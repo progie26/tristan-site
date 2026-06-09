@@ -1,0 +1,165 @@
+<!-- ============================================================
+   /tags/[tag].astro — Tag aggregation page
+   Shows all blog posts + projects with a given tag, mixed together.
+   ============================================================ -->
+
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PostCard from "../../components/blog/PostCard.astro";
+import ProjectCard from "../../components/portfolio/ProjectCard.astro";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("blog", ({ data }) => !data.draft);
+  const projects = await getCollection("projects", ({ data }) => !data.draft);
+
+  const tagSet = new Set<string>();
+  for (const post of posts) {
+    for (const tag of post.data.tags) tagSet.add(tag);
+  }
+  for (const project of projects) {
+    for (const tag of project.data.tags) tagSet.add(tag);
+  }
+
+  return [...tagSet].map((tag) => ({
+    params: { tag },
+    props: { tag, posts, projects },
+  }));
+}
+
+interface Props {
+  tag: string;
+  posts: ReturnType<typeof getCollection<"blog">> extends Promise<infer T> ? T : never;
+  projects: ReturnType<typeof getCollection<"projects">> extends Promise<infer T> ? T : never;
+}
+
+const { tag, posts, projects } = Astro.props;
+
+const filteredPosts = posts
+  .filter((p) => p.data.tags.includes(tag))
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+const filteredProjects = projects
+  .filter((p) => p.data.tags.includes(tag))
+  .sort((a, b) => (b.data.year ?? 0) - (a.data.year ?? 0));
+
+const totalCount = filteredPosts.length + filteredProjects.length;
+---
+
+<BaseLayout
+  title={`#${tag} | Tristan Chen`}
+  description={`${totalCount} 篇与 ${tag} 相关的内容`}
+  canonicalURL={new URL(`/tags/${tag}`, Astro.site).href}
+  currentPath={`/tags/${tag}`}
+>
+  <div class="tag-page">
+    <header class="tag-header">
+      <a href="/" class="tag-back">← 首页</a>
+      <h1 class="tag-title">
+        <span class="tag-hash">#</span>{tag}
+      </h1>
+      <p class="tag-count">
+        {totalCount} 篇内容
+        ({filteredPosts.length} 篇文章 · {filteredProjects.length} 个项目)
+      </p>
+    </header>
+
+    {totalCount === 0 ? (
+      <div class="tag-empty">
+        <p>暂无内容</p>
+      </div>
+    ) : (
+      <div class="tag-content">
+        {filteredPosts.length > 0 && (
+          <section class="tag-section">
+            <h2 class="tag-section-title">文章</h2>
+            <div class="tag-grid">
+              {filteredPosts.map((post) => (
+                <PostCard post={post} peek />
+              ))}
+            </div>
+          </section>
+        )}
+
+        {filteredProjects.length > 0 && (
+          <section class="tag-section">
+            <h2 class="tag-section-title">项目</h2>
+            <div class="tag-grid">
+              {filteredProjects.map((project) => (
+                <ProjectCard project={project} peek />
+              ))}
+            </div>
+          </section>
+        )}
+      </div>
+    )}
+  </div>
+</BaseLayout>
+
+<style>
+  .tag-page {
+    max-width: var(--grid-max);
+    margin-inline: auto;
+    padding: var(--space-16) var(--page-padding-x);
+  }
+
+  .tag-header {
+    margin-block-end: var(--space-12);
+  }
+
+  .tag-back {
+    font-size: var(--text-sm);
+    color: var(--color-ink-secondary);
+    margin-block-end: var(--space-4);
+    display: inline-block;
+  }
+
+  .tag-title {
+    font-family: var(--font-serif);
+    font-size: var(--text-3xl);
+    font-weight: var(--weight-bold);
+    margin: var(--space-4) 0 0;
+    color: var(--color-ink);
+  }
+
+  .tag-hash {
+    color: var(--color-accent);
+  }
+
+  .tag-count {
+    font-size: var(--text-base);
+    color: var(--color-ink-secondary);
+    margin: var(--space-3) 0 0;
+  }
+
+  .tag-empty {
+    padding: var(--space-16);
+    text-align: center;
+    color: var(--color-ink-tertiary);
+    border: 2px dashed var(--color-border);
+    border-radius: 12px;
+  }
+
+  .tag-section {
+    margin-block-end: var(--space-16);
+  }
+
+  .tag-section-title {
+    font-size: var(--text-xl);
+    font-weight: var(--weight-semibold);
+    margin: 0 0 var(--space-6);
+    color: var(--color-ink);
+  }
+
+  .tag-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+  }
+
+  @media (min-width: 640px) {
+    .tag-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+</style>

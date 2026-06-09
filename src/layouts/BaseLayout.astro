@@ -1,0 +1,68 @@
+<!-- ============================================================
+   BaseLayout.astro — Global layout shell
+   Every page wraps in this: BaseHead + Header + main + Footer
+   ============================================================ -->
+
+---
+import BaseHead from "../components/layout/BaseHead.astro";
+import Header from "../components/layout/Header.astro";
+import Footer from "../components/layout/Footer.astro";
+import PageTransition from "../components/shared/PageTransition.astro";
+import SearchWrapper from "../components/interactive/SearchWrapper.tsx";
+
+interface ContentEntry {
+  type: "article" | "project";
+  slug: string;
+  title: string;
+  description: string;
+  tags: string[];
+  url: string;
+}
+
+interface Props {
+  title: string;
+  description: string;
+  ogImage?: string;
+  canonicalURL: string;
+  lang?: "zh" | "en" | "mixed";
+  currentPath: string;
+  /** If true, hides the footer on this page */
+  hideFooter?: boolean;
+  /** Search index for command palette. Pages can pass serialized content. */
+  searchIndex?: ContentEntry[];
+}
+
+const {
+  title,
+  description,
+  ogImage,
+  canonicalURL,
+  lang = "zh",
+  currentPath,
+  hideFooter = false,
+  searchIndex = [],
+} = Astro.props;
+---
+
+<html lang={lang === "mixed" ? "zh" : lang}>
+  <BaseHead
+    title={title}
+    description={description}
+    ogImage={ogImage}
+    canonicalURL={canonicalURL}
+    lang={lang}
+  />
+  <body>
+    <Header currentPath={currentPath} />
+
+    <PageTransition />
+
+    <main>
+      <slot />
+    </main>
+
+    {!hideFooter && <Footer />}
+
+    <SearchWrapper index={searchIndex} client:load />
+  </body>
+</html>

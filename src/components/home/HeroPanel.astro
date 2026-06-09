@@ -1,0 +1,136 @@
+<!-- ============================================================
+   HeroPanel.astro — Homepage hero card
+   Large card with name, bio, stats, and CTA links.
+   ============================================================ -->
+
+---
+import Card from "../ui/Card.astro";
+import { SITE, SOCIAL_LINKS } from "../../lib/constants";
+
+interface Props {
+  blogCount: number;
+  projectCount: number;
+}
+
+const { blogCount, projectCount } = Astro.props;
+---
+
+<Card size="2x2" class="hero-panel">
+  <div class="hero-inner">
+    <div class="hero-avatar" aria-hidden="true">
+      <span class="hero-avatar-text">TC</span>
+    </div>
+
+    <div class="hero-text">
+      <h1 class="hero-name">{SITE.author}</h1>
+      <p class="hero-role">学生 / 写代码 / 学机器学习</p>
+      <p class="hero-bio">"写点东西，做点东西。"</p>
+    </div>
+
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <span class="hero-stat-num">{blogCount}</span>
+        <span class="hero-stat-label">文章</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-num">{projectCount}</span>
+        <span class="hero-stat-label">项目</span>
+      </div>
+    </div>
+
+    <div class="hero-actions">
+      <a href="/about" class="hero-link">关于我 →</a>
+      <a href={SOCIAL_LINKS.github} target="_blank" rel="noopener noreferrer" class="hero-link">GitHub ↗</a>
+    </div>
+  </div>
+</Card>
+
+<style>
+  .hero-panel {
+    background: linear-gradient(135deg, var(--color-bg-elevated), var(--color-accent-muted));
+  }
+
+  .hero-inner {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    gap: var(--space-4);
+  }
+
+  .hero-avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--color-accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .hero-avatar-text {
+    font-family: var(--font-sans);
+    font-size: var(--text-xl);
+    font-weight: var(--weight-bold);
+    color: #fff;
+    letter-spacing: 0.02em;
+  }
+
+  .hero-name {
+    font-family: var(--font-serif);
+    font-size: var(--text-3xl);
+    font-weight: var(--weight-bold);
+    margin: 0;
+    line-height: var(--leading-tight);
+  }
+
+  .hero-role {
+    font-size: var(--text-base);
+    color: var(--color-accent);
+    margin: var(--space-2) 0 0;
+    font-weight: var(--weight-medium);
+  }
+
+  .hero-bio {
+    font-size: var(--text-sm);
+    color: var(--color-ink-secondary);
+    margin: var(--space-3) 0 0;
+    font-style: italic;
+  }
+
+  .hero-stats {
+    display: flex;
+    gap: var(--space-8);
+    margin-block-start: auto;
+  }
+
+  .hero-stat {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .hero-stat-num {
+    font-family: var(--font-serif);
+    font-size: var(--text-2xl);
+    font-weight: var(--weight-bold);
+    color: var(--color-accent);
+    line-height: 1;
+  }
+
+  .hero-stat-label {
+    font-size: var(--text-xs);
+    color: var(--color-ink-tertiary);
+    margin-block-start: var(--space-1);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: var(--space-4);
+  }
+
+  .hero-link {
+    font-size: var(--text-sm);
+    font-weight: var(--weight-medium);
+  }
+</style>

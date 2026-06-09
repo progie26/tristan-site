@@ -1,0 +1,35 @@
+---
+title: "这个网站本身"
+titleEn: "This Website Itself"
+description: "用 Astro 5 + Tailwind CSS 4 + React 19 搭建的个人博客与作品集混合站点。"
+date: 2026-06-10
+tags: ["astro", "react", "design"]
+category: "web"
+lang: "mixed"
+draft: false
+featured: true
+techStack: ["Astro", "Tailwind CSS", "React", "TypeScript", "MDX"]
+year: 2026
+status: "done"
+repoUrl: "https://github.com/tristanchen/tristan-site"
+projectUrl: "https://tristanchen.me"
+---
+
+## 设计理念
+
+这个网站的核心想法很简单：**不要只是滚动**。
+
+大部分个人博客都是一个纵向的 feed——你从上往下刷，看到什么完全由时间线决定。我想要的是更像一个"数字桌面"：所有内容卡片同时呈现在视口内，你通过点击、筛选、搜索来探索，浏览路径由你自己决定。
+
+## 技术选型
+
+- **Astro 5**：编译为纯静态 HTML，只在需要交互的地方注水 React island
+- **Tailwind CSS 4**：CSS-first 配置，不再需要 `tailwind.config.js`
+- **Motion (ex-Framer Motion)**：卡片 FLIP 动画和面板滑出过渡
+- **Content Collections**：Zod schema + 类型安全的 MDX 管理
+
+## 核心交互
+
+首页是一个填满视口的 Bento Grid——6-8 块大小不一的卡片。Hero 卡、最近文章、精选项目、标签云全部在一屏内。通过标签筛选、悬停预览、面板滑出三种方式浏览，不依赖纵向滚动。
+
+文章详情页回归传统阅读流——因为长文需要滚动，那是对的内容承载形式。

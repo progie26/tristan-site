@@ -1,0 +1,48 @@
+---
+title: "从零搭一个博客：为什么我选了 Astro"
+titleEn: "Building a Blog from Scratch: Why I Chose Astro"
+description: "一个编程不到一年的学生，在选框架这件事上踩过的坑和最终的选择。"
+date: 2026-06-10
+tags: ["astro", "web", "learning-log"]
+category: "reflection"
+lang: "mixed"
+draft: false
+featured: true
+---
+
+## 起点：我到底要什么
+
+事情很简单：我需要一个地方放我的项目和笔记。
+
+市面上有成百上千的博客模板，但用起来总觉得不对劲——不是设计太花哨，就是信息架构像一篇永远翻不完的 feed。我想要的是：**一个填满视口的数字桌面，所有内容同时可见，通过点击和筛选来浏览，而不是通过滚动。**
+
+## 为什么不是纯 HTML/CSS？
+
+作为一个编程不到一年的人，我一开始想的是"手写 HTML 最自由"。但很快就撞了墙：
+
+1. **每次加新文章要复制粘贴 layout**。写第三篇的时候就烦了
+2. **MDX 写不了**。我的笔记里有大量代码块和 LaTeX 公式，没有 MDX 意味着要手写 `<pre><code>` 和 KaTeX markup
+3. **交互模式要用 vanilla JS 写到吐**。Tag 筛选、搜索面板、dark mode 切换——每个都需要状态管理、DOM 操作、localStorage 同步
+
+## 为什么不是 Next.js？
+
+Next.js App Router 很棒，但我打开文档第一页看到的是：
+
+> "React Server Components, Server Actions, Streaming, ISR, Edge Runtime, Middleware..."
+
+我需要这些吗？一个不到 50 篇文章的静态博客，这些东西对我来说是**过度抽象**。我不需要 server 端渲染每一页——我需要在 build 阶段把所有东西提前生成好，然后扔到 CDN 上永远不用管。
+
+## Astro 刚好卡在中间
+
+Astro 的 island 架构完美对应我的需求：
+
+- **80% 的页面是纯 HTML**（`.astro` 模板，编译后零 JS）
+- **20% 的组件是 React island**（Tag 筛选、搜索面板、卡片展开动画——只在需要交互的地方注水）
+- **Content Collections** 内置 Zod schema，类型自动推导，不需要额外装 Velite 或 Contentlayer
+- **部署零锁定**：`astro build` 输出纯静态 `dist/`，可以扔到任何地方
+
+## 一个周末搭出的骨架
+
+周五晚上初始化项目，周六写 layout 和 UI 组件，周日接 Content Collections 和 React islands。到周日晚上已经有一个可以写文章、展示项目、按标签筛选的完整站点了。
+
+剩下的时间——我花在了写这篇文章上，而不是 debug 框架配置。

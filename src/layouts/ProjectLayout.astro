@@ -1,0 +1,192 @@
+<!-- ============================================================
+   ProjectLayout.astro — Project detail page layout
+   Extends BaseLayout with tech stack and link area.
+   ============================================================ -->
+
+---
+import BaseLayout from "./BaseLayout.astro";
+import Badge from "../components/ui/Badge.astro";
+import TechStackList from "../components/portfolio/TechStackList.astro";
+import { formatDate } from "../lib/utils";
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+  project: CollectionEntry<"projects">;
+}
+
+const { project } = Astro.props;
+const {
+  title,
+  description,
+  date,
+  techStack,
+  status,
+  lang,
+  projectUrl,
+  repoUrl,
+  year,
+} = project.data;
+const canonicalURL = new URL(`/projects/${project.slug}`, Astro.site).href;
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonicalURL={canonicalURL}
+  lang={lang}
+  currentPath={`/projects/${project.slug}`}
+>
+  <div class="project-layout">
+    <header class="project-header">
+      <div class="project-header-meta">
+        <Badge variant={status} />
+        {year && <span class="project-year">{year}</span>}
+        <span>{formatDate(date)}</span>
+      </div>
+      <h1 class="project-title">{title}</h1>
+      <p class="project-desc">{description}</p>
+
+      <div class="project-actions">
+        {projectUrl && (
+          <a href={projectUrl} target="_blank" rel="noopener noreferrer" class="btn btn--primary">
+            Live Demo ↗
+          </a>
+        )}
+        {repoUrl && (
+          <a href={repoUrl} target="_blank" rel="noopener noreferrer" class="btn btn--secondary">
+            Source Code
+          </a>
+        )}
+      </div>
+
+      {techStack.length > 0 && (
+        <div class="project-tech">
+          <h3 class="section-label">技术栈</h3>
+          <TechStackList techStack={techStack} />
+        </div>
+      )}
+    </header>
+
+    <article class="project-body">
+      <slot />
+    </article>
+
+    <footer class="project-footer">
+      <a href="/projects" class="back-link">← 返回项目列表</a>
+    </footer>
+  </div>
+</BaseLayout>
+
+<style>
+  .project-layout {
+    max-width: var(--content-max);
+    margin-inline: auto;
+    padding: var(--space-10) var(--page-padding-x);
+  }
+
+  @media (min-width: 1024px) {
+    .project-layout {
+      padding-block-start: var(--space-16);
+    }
+  }
+
+  .project-header {
+    margin-block-end: var(--space-12);
+  }
+
+  .project-header-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    font-size: var(--text-sm);
+    color: var(--color-ink-secondary);
+    margin-block-end: var(--space-4);
+  }
+
+  .project-year {
+    font-weight: var(--weight-medium);
+  }
+
+  .project-title {
+    font-family: var(--font-serif);
+    font-size: var(--text-3xl);
+    font-weight: var(--weight-bold);
+    line-height: var(--leading-tight);
+    margin: 0 0 var(--space-3);
+  }
+
+  .project-desc {
+    font-size: var(--text-lg);
+    color: var(--color-ink-secondary);
+    margin: 0 0 var(--space-6);
+    line-height: var(--leading-normal);
+  }
+
+  .project-actions {
+    display: flex;
+    gap: var(--space-3);
+    margin-block-end: var(--space-8);
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-5);
+    border-radius: 8px;
+    font-size: var(--text-sm);
+    font-weight: var(--weight-medium);
+    text-decoration: none;
+    background-image: none;
+    transition: background-color var(--duration-fast);
+  }
+  .btn--primary {
+    background: var(--color-accent);
+    color: #fff;
+  }
+  .btn--primary:hover {
+    background: var(--color-accent-hover);
+    background-image: none;
+  }
+  .btn--secondary {
+    background: var(--color-bg-inset);
+    color: var(--color-ink);
+    border: 1px solid var(--color-border);
+  }
+  .btn--secondary:hover {
+    border-color: var(--color-border-strong);
+    background-image: none;
+  }
+
+  .section-label {
+    font-size: var(--text-xs);
+    font-weight: var(--weight-semibold);
+    color: var(--color-ink-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 0 0 var(--space-2);
+  }
+
+  .project-tech {
+    margin-block-start: var(--space-6);
+  }
+
+  .project-body {
+    min-height: 30vh;
+  }
+
+  .project-footer {
+    margin-block-start: var(--space-16);
+    padding-block-start: var(--space-8);
+    border-top: 1px solid var(--color-border);
+  }
+
+  .back-link {
+    font-size: var(--text-sm);
+    color: var(--color-ink-secondary);
+  }
+  .back-link:hover {
+    color: var(--color-ink);
+  }
+</style>

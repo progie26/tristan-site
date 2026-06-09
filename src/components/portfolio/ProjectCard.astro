@@ -1,0 +1,168 @@
+<!-- ============================================================
+   ProjectCard.astro — Project preview card
+   Used in list pages and Bento grid.
+   Shows cover / title / status badge / tech stack / links.
+   ============================================================ -->
+
+---
+import Card from "../ui/Card.astro";
+import Badge from "../ui/Badge.astro";
+import TechStackList from "./TechStackList.astro";
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+  project: CollectionEntry<"projects">;
+  size?: "1x1" | "2x1" | "1x2" | "2x2";
+  peek?: boolean;
+  class?: string;
+}
+
+const { project, size = "1x1", peek = false, class: className } = Astro.props;
+const {
+  title,
+  description,
+  status,
+  techStack,
+  image,
+  projectUrl,
+  repoUrl,
+} = project.data;
+const href = `/projects/${project.slug}`;
+---
+
+<Card size={size} href={href} expandable class={className}>
+  <article class="project-card">
+    {image && (
+      <div class="project-card-image">
+        <img src={image} alt={title} loading="lazy" decoding="async" />
+      </div>
+    )}
+
+    <div class="project-card-body">
+      <div class="project-card-header">
+        <h3 class="project-card-title">{title}</h3>
+        <Badge variant={status} />
+      </div>
+
+      {peek && (
+        <p class="project-card-desc">{description}</p>
+      )}
+
+      <div class="project-card-footer">
+        <TechStackList techStack={techStack.slice(0, 4)} />
+
+        <div class="project-card-links">
+          {projectUrl && (
+            <a
+              href={projectUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="project-link"
+              aria-label="Live demo"
+            >
+              ↗
+            </a>
+          )}
+          {repoUrl && (
+            <a
+              href={repoUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="project-link"
+              aria-label="Source code"
+            >
+              ⬢
+            </a>
+          )}
+        </div>
+      </div>
+    </div>
+  </article>
+</Card>
+
+<style>
+  .project-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    height: 100%;
+  }
+
+  .project-card-image {
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    border-radius: 8px;
+    background: var(--color-bg-inset);
+  }
+
+  .project-card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--duration-slow) var(--ease-out);
+  }
+
+  .card:hover .project-card-image img {
+    transform: scale(1.03);
+  }
+
+  .project-card-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .project-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-2);
+  }
+
+  .project-card-title {
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    font-weight: var(--weight-semibold);
+    line-height: var(--leading-snug);
+    margin: 0;
+    color: var(--color-ink);
+  }
+
+  .project-card-desc {
+    font-size: var(--text-sm);
+    line-height: var(--leading-normal);
+    color: var(--color-ink-secondary);
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .project-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    margin-block-start: auto;
+  }
+
+  .project-card-links {
+    display: flex;
+    gap: var(--space-2);
+    flex-shrink: 0;
+  }
+
+  .project-link {
+    font-size: var(--text-lg);
+    color: var(--color-ink-tertiary);
+    background-image: none;
+    padding: var(--space-1);
+    line-height: 1;
+  }
+  .project-link:hover {
+    color: var(--color-accent);
+    background-image: none;
+  }
+</style>

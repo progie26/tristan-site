@@ -1,0 +1,186 @@
+/* ============================================================
+   MDX Prose Styles — Article typography
+   ============================================================ */
+
+/* Prose wrapper for MDX-rendered articles */
+.prose {
+  max-width: var(--content-max);
+  margin-inline: auto;
+  padding-inline: var(--page-padding-x);
+  font-family: var(--font-serif);
+  font-size: var(--text-base);
+  line-height: var(--leading-relaxed);
+  color: var(--color-ink);
+}
+
+/* Headings */
+.prose h1 {
+  font-family: var(--font-serif);
+  font-size: var(--text-3xl);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-tight);
+  margin-block: var(--space-12) var(--space-6);
+  color: var(--color-ink);
+}
+
+.prose h2 {
+  font-family: var(--font-sans);
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-snug);
+  margin-block: var(--space-10) var(--space-4);
+  padding-top: var(--space-8);
+  border-top: 1px solid var(--color-border);
+  color: var(--color-ink);
+}
+
+.prose h3 {
+  font-family: var(--font-sans);
+  font-size: var(--text-xl);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-snug);
+  margin-block: var(--space-8) var(--space-3);
+  color: var(--color-ink-secondary);
+}
+
+.prose h4 {
+  font-family: var(--font-sans);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-snug);
+  margin-block: var(--space-6) var(--space-2);
+  color: var(--color-ink-secondary);
+}
+
+/* Paragraphs */
+.prose p {
+  margin-block: var(--space-4);
+  text-align: justify;
+  hyphens: auto;
+}
+
+/* Lists */
+.prose ul,
+.prose ol {
+  margin-block: var(--space-4);
+  padding-inline-start: var(--space-6);
+}
+.prose li {
+  margin-block: var(--space-2);
+}
+.prose li > p {
+  margin-block: var(--space-2);
+}
+
+/* Blockquotes */
+.prose blockquote {
+  margin-block: var(--space-6);
+  padding-inline-start: var(--space-6);
+  border-inline-start: 3px solid var(--color-accent);
+  color: var(--color-ink-secondary);
+  font-style: italic;
+}
+.prose blockquote p {
+  margin-block: var(--space-3);
+}
+
+/* Inline code */
+.prose code:not(pre code) {
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+  background: var(--color-bg-inset);
+  color: var(--color-accent);
+}
+
+/* Code blocks */
+.prose pre {
+  margin-block: var(--space-8);
+  padding: var(--space-5);
+  border-radius: 8px;
+  background: var(--color-bg-inset);
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  line-height: var(--leading-code);
+  border: 1px solid var(--color-border);
+}
+.prose pre code {
+  font-family: inherit;
+  font-size: inherit;
+  padding: 0;
+  background: none;
+  color: inherit;
+}
+
+/* Tables */
+.prose table {
+  width: 100%;
+  margin-block: var(--space-6);
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+}
+.prose th {
+  font-weight: var(--weight-semibold);
+  text-align: left;
+  padding: var(--space-3);
+  border-bottom: 2px solid var(--color-border-strong);
+}
+.prose td {
+  padding: var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+}
+
+/* Horizontal rule */
+.prose hr {
+  margin-block: var(--space-10);
+  border: none;
+  border-top: 1px solid var(--color-border);
+}
+
+/* Strong & emphasis */
+.prose strong {
+  font-weight: var(--weight-bold);
+  color: var(--color-ink);
+}
+.prose em {
+  font-style: italic;
+}
+
+/* Images */
+.prose img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin-block: var(--space-6);
+}
+
+/* Anchor links on headings */
+.prose .anchor-link {
+  opacity: 0;
+  font-size: 0.85em;
+  margin-inline-start: 0.3em;
+  transition: opacity var(--duration-fast);
+}
+.prose h2:hover .anchor-link,
+.prose h3:hover .anchor-link,
+.prose h4:hover .anchor-link {
+  opacity: 0.5;
+}
+
+/* CJK-specific optimizations */
+.prose:lang(zh),
+.prose [lang="zh"] {
+  text-align: justify;
+  letter-spacing: 0.02em;
+}
+.prose:lang(zh) p,
+.prose [lang="zh"] p {
+  line-height: var(--leading-relaxed);
+}
+
+/* Mixed text spacing */
+.prose p {
+  text-spacing-trim: space-first;
+}

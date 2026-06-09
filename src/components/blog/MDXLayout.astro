@@ -1,0 +1,16 @@
+<!-- ============================================================
+   MDXLayout.astro — MDX render shell
+   Wraps rendered MDX content in prose typography.
+   ============================================================ -->
+
+---
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<article class={["prose", className].filter(Boolean).join(" ")}>
+  <slot />
+</article>

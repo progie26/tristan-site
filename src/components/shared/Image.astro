@@ -1,0 +1,54 @@
+<!-- ============================================================
+   Image.astro — Responsive image wrapper
+   Uses Astro's built-in Image component for optimization.
+   Falls back to plain <img> for external URLs.
+   ============================================================ -->
+
+---
+import { Image as AstroImage } from "astro:assets";
+
+interface Props {
+  src: string;
+  alt: string;
+  class?: string;
+  width?: number;
+  height?: number;
+  /** "lazy" (default) or "eager" */
+  loading?: "lazy" | "eager";
+}
+
+const {
+  src,
+  alt,
+  class: className,
+  width,
+  height,
+  loading = "lazy",
+} = Astro.props;
+
+// External URLs — use plain <img>
+const isExternal = src.startsWith("http");
+---
+
+{
+  isExternal ? (
+    <img
+      src={src}
+      alt={alt}
+      class={className}
+      loading={loading}
+      decoding="async"
+      {...(width ? { width } : {})}
+      {...(height ? { height } : {})}
+    />
+  ) : (
+    <img
+      src={src}
+      alt={alt}
+      class={className}
+      loading={loading}
+      decoding="async"
+      style="max-width: 100%; height: auto;"
+    />
+  )
+}

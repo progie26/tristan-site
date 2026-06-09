@@ -1,0 +1,84 @@
+<!-- ============================================================
+   Navigation.astro — Nav links list
+   Highlights the current page route.
+   ============================================================ -->
+
+---
+import { NAV_LINKS } from "../../lib/constants";
+
+interface Props {
+  currentPath: string;
+}
+
+const { currentPath } = Astro.props;
+
+function isActive(href: string, path: string): boolean {
+  if (href === "/") return path === "/";
+  return path.startsWith(href);
+}
+---
+
+<nav class="nav" aria-label="Main navigation">
+  <ul class="nav-list">
+    {
+      NAV_LINKS.map((link) => (
+        <li>
+          <a
+            href={link.href}
+            class={isActive(link.href, currentPath) ? "nav-link active" : "nav-link"}
+            aria-current={isActive(link.href, currentPath) ? "page" : undefined}
+          >
+            {link.labelZh} <span class="nav-label-en">{link.label}</span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</nav>
+
+<style>
+  .nav-list {
+    display: flex;
+    gap: var(--space-1);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .nav-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    padding: var(--space-2) var(--space-3);
+    border-radius: 8px;
+    font-size: var(--text-sm);
+    font-weight: var(--weight-medium);
+    color: var(--color-ink-secondary);
+    background-image: none;
+    transition:
+      color var(--duration-fast) var(--ease-out),
+      background-color var(--duration-fast) var(--ease-out);
+  }
+
+  .nav-link:hover {
+    color: var(--color-ink);
+    background-color: var(--color-bg-inset);
+  }
+
+  .nav-link.active {
+    color: var(--color-accent);
+    background-color: var(--color-accent-muted);
+  }
+
+  .nav-label-en {
+    font-size: var(--text-xs);
+    opacity: 0.5;
+    display: none;
+  }
+
+  @media (min-width: 640px) {
+    .nav-label-en {
+      display: inline;
+    }
+  }
+</style>
